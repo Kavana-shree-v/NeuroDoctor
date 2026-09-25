@@ -12,7 +12,7 @@ import base64
 import numpy as np
 import cv2
 import tensorflow as tf
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from PIL import Image
 
@@ -24,7 +24,7 @@ app = Flask(__name__)
 CORS(app)
 
 CLASSES    = ["glioma", "meningioma", "notumor", "pituitary"]
-MODEL_PATH = os.path.join("model", "brain_tumor_model.keras")
+MODEL_PATH = "brain_tumor_model.keras"
 
 # Class descriptions shown in the UI
 CLASS_INFO = {
@@ -70,6 +70,10 @@ def ndarray_to_base64_png(img_array):
 
 
 # ─── Routes ───────────────────────────────────────────────────────────────────
+@app.route("/", methods=["GET"])
+def serve_frontend():
+    return send_from_directory(".", "index.html")
+  
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok", "model": MODEL_PATH})
